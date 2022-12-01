@@ -11,7 +11,15 @@ def find_last_page():
     return last_page
 
 def main():
-    URL = f"https://www.rossmann.pl/promocje?Page={page}&PageSize=96"    #Page=1
-    request = requests.get(URL)
-    soup 
-find_last_page()
+    counter = 0
+    for page in range(last_page):
+        URL = f"https://www.rossmann.pl/promocje?Page={page}&PageSize=96"    #Page=1
+        request = requests.get(URL)
+        soup = BeautifulSoup(request.content, 'html5lib')
+        a = soup.find_all('a', {'class': "tile-product__name"})
+        for element in a:
+            link = "https://rossmann.pl" + element['href']
+            print(f"{counter}. {link}")
+            counter += 1
+last_page = find_last_page()
+main()
