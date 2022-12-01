@@ -16,7 +16,7 @@ def find_last_page(category):
     last_page = int(a.text)
     return last_page
 
-def main(category):
+def main(category, last_page):
     counter = 0
     for page in range(last_page):
         URL = f"https://www.rossmann.pl/promocje?CategoryId={category}&Page={page}&PageSize=96"
@@ -27,5 +27,35 @@ def main(category):
             link = "https://rossmann.pl" + element['href']
             print(f"{counter}. {link}")
             counter += 1
-last_page = find_last_page(perfumes)
-main(perfumes)
+
+def menu():
+    print("""
+    PLEASE CHOOSE YOUR CATEGORY
+    
+    1. FACE
+    2. MAKEUP
+    3. HAIR
+    4. BODY
+    5. PERFUMES
+    
+    TYPE IN CORESPONDING NUMBER""")
+    choice = input(">> ")
+    if choice == "1":
+        last_page = find_last_page(face)
+        main(face, last_page)
+    elif choice == "2":
+        last_page = find_last_page(makeup)
+        main(makeup, last_page)
+    elif choice == "3":
+        last_page = find_last_page(hair)
+        main(hair, last_page)
+    elif choice == "4":
+        last_page = find_last_page(body)
+        main(body, last_page)
+    elif choice == "5":
+        last_page = find_last_page(perfumes)
+        main(perfumes, last_page)
+    else:
+        print("Thats an error")
+
+menu()
