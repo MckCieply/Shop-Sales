@@ -27,6 +27,15 @@ def main(category, last_page):
             link = "https://rossmann.pl" + element['href']
             print(f"{counter}. {link}")
             counter += 1
+            single_sale(link)
+
+def single_sale(URL):
+    request = requests.get(URL)
+    soup = BeautifulSoup(request.content, "html5lib")
+    span = soup.find('small', {"class" : "h2 d-block text-primary"})
+    #strong = small.find_all ('strong')
+    print (span)
+
 
 def menu():
     print("""
