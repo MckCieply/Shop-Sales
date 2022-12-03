@@ -5,10 +5,15 @@ import requests
 
 
 def find_last_page():
-    last_page = 0
+    URL = "https://www.ezebra.pl/pl/promotions/promocja.html?&filter_traits%5B25445%5D=25451%2C25464%2C25461%2C25450%2C25455&filter_price=0-30"
+    request = requests.get(URL)
+    soup = BeautifulSoup(request.content , 'html5lib')
+    ul = soup.find('ul', {'class': 's_paging__item pagination mb-2 mb-sm-3'})
+    li = ul.find_all('li', {'class' : 'pagination__element --item'})
+    last_page = li[-1].text
     return last_page
 
-def main():
+def main(last_page):
     counter = 1
     URL = "https://www.ezebra.pl/pl/promotions/promocja.html?&filter_traits%5B25445%5D=25451%2C25464%2C25461%2C25450%2C25455&filter_price=0-30"
     request = requests.get(URL)
@@ -23,4 +28,5 @@ def main():
         print(f"{counter}. {first_price} {sale} = {sale_price}")
         counter += 1
 
-main()
+last_page = find_last_page()
+main(last_page)
