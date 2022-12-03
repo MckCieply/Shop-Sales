@@ -2,6 +2,8 @@ from bs4 import BeautifulSoup
 import sqlite3 as sql
 import requests
 #https://www.ezebra.pl/pl/promotions/promocja.html?&filter_traits%5B25445%5D=25451%2C25464%2C25461%2C25450%2C25455&filter_price=0-30
+#gotta make it show 100 sales per page to lower working time
+#perhaps store in db old prices to see real sale
 
 
 def find_last_page():
