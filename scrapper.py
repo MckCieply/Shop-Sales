@@ -8,17 +8,17 @@ conn = sql.connect('sales.db')
 cur = conn.cursor()
 def first_db_innit():
     cur.execute("""CREATE TABLE sales(
-                sale_id INT PRIMARY KEY,
-                product_id INT,
-                old_price INT,
-                sale_percent INT,
-                new_price INT,
+                sale_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                product_id INTEGER,
+                old_price INTEGER,
+                sale_percent INTEGER,
+                new_price INTEGER,
                 link TEXT)
                 """)
 
 def db_query(prod_id, old_price, sale_percent, sale_price, link):
     cur.execute("""INSERT INTO sales (product_id, old_price, sale_percent, new_price, link) 
-                VALUES (?,?,?,?)""", prod_id, old_price, sale_percent, sale_price, link)
+                VALUES (?,?,?,?,?)""", (prod_id, old_price, sale_percent, sale_price, link))
 
 def find_last_page():
     URL = "https://www.ezebra.pl/pl/promotions/promocja.html?&filter_traits%5B25445%5D=25451%2C25464%2C25461%2C25450%2C25455&filter_price=0-30"
@@ -45,8 +45,11 @@ def main(last_page):
             old_price = element.find('del', {"class": "price --max"}).text
             sale_price = element.find('strong', {'class' : 'price --max-exists'}).text
             #print(f"{counter}. {old_price} {sale} = {sale_price}, {href} {prod_id}")
+            print(counter)
             counter += 1
-            #db_query(prod_id, old_price, sale, sale_price, href)
-#first_db_innit()
+            db_query(prod_id, old_price, sale, sale_price, href)
+    conn.commit()
+    
+first_db_innit()
 last_page = find_last_page()
 main(last_page)
