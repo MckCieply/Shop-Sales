@@ -4,7 +4,21 @@ import requests
 #https://www.ezebra.pl/pl/promotions/promocja.html?&filter_traits%5B25445%5D=25451%2C25464%2C25461%2C25450%2C25455&filter_price=0-30
 #gotta make it show 100 sales per page to lower working time
 #perhaps store in db old prices to see real sale
+conn = sql.connect('sales.db')
+cur = conn.cursor()
+def first_db_innit():
+    cur.execute("""CREATE TABLE sales(
+                sale_id INT PRIMARY KEY,
+                product_id INT,
+                old_price INT,
+                sale_percent INT,
+                new_price INT,
+                link TEXT)
+                """)
 
+def db_query(prod_id, old_price, sale_percent, sale_price):
+    cur.execute("""INSERT INTO sales (product_id, old_price, sale_percent, new_price) 
+                VALUES (?,?,?,?)""",)
 
 def find_last_page():
     URL = "https://www.ezebra.pl/pl/promotions/promocja.html?&filter_traits%5B25445%5D=25451%2C25464%2C25461%2C25450%2C25455&filter_price=0-30"
@@ -25,11 +39,12 @@ def main(last_page):
         for element in div:
             a = element.find('a', {'class':'product__icon d-flex justify-content-center align-items-center'})
             href = a['href']
+            prod_id = div['data-id']
             sale = element.find("div", {'class': 'product__yousavepercent'}).text.strip()
-            first_price = element.find('del', {"class": "price --max"}).text
+            old_price = element.find('del', {"class": "price --max"}).text
             sale_price = element.find('strong', {'class' : 'price --max-exists'}).text
-            print(f"{counter}. {first_price} {sale} = {sale_price}")
+            print(f"{counter}. {old_price} {sale} = {sale_price}")
             counter += 1
-
-last_page = find_last_page()
-main(last_page)
+#first_db_innit()
+# last_page = find_last_page()
+# main(last_page)
