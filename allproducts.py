@@ -15,4 +15,12 @@ def find_last_page():
     last_page = int(li[-1].text)
     return last_page
 
-last_page = find_last_page
+last_page = find_last_page()
+
+def main(last_page):
+    counter = 1
+    for page in range(0,last_page):
+        URL = f"https://www.ezebra.pl/pl/menu/makijaz-100.html?filter_producer=&search=&filter_node%5B1%5D=&filter_price=0-30&filter_traits%5B25445%5D=25451%2C25464%2C25461%2C25450%2C25455&counter={page}"
+        
+
+main(last_page)
