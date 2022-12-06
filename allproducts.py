@@ -21,6 +21,15 @@ def main(last_page):
     counter = 1
     for page in range(0,last_page):
         URL = f"https://www.ezebra.pl/pl/menu/makijaz-100.html?filter_producer=&search=&filter_node%5B1%5D=&filter_price=0-30&filter_traits%5B25445%5D=25451%2C25464%2C25461%2C25450%2C25455&counter={page}"
-        
+        request = requests.get(URL)
+        soup = BeautifulSoup(request.content, 'html5lib')
+        div = soup.find_all("div", {"class" : "product col-6 col-sm-4 pt-3 pb-md-3"})
+        for element in div:
+            a = element.find('a', {'class':'product__icon d-flex justify-content-center align-items-center'})
+            href = "https://www.ezebra.pl" + a['href']
+            prod_id = element['data-id']
+            price = element.find('strong', {'class' : 'price'}).text
+            print(f"ID: {prod_id} \n link: {href} \n Price: {price}")
+            
 
 main(last_page)
