@@ -24,7 +24,6 @@ def db_query(prod_id, price, link, tdate):
     cur.execute("""INSERT INTO stock (product_id, price, link, updated) 
                 VALUES (?,?,?,?)""", (prod_id, price, link, tdate))
 
-
 def find_last_page():
     URL = "https://www.ezebra.pl/pl/menu/makijaz-100.html?filter_producer=&search=&filter_node%5B1%5D=&filter_price=0-30&filter_traits%5B25445%5D=25451%2C25464%2C25461%2C25450%2C25455"
     request = requests.get(URL)
@@ -35,7 +34,7 @@ def find_last_page():
     return last_page
 
 def main(last_page):
-    counter = 1
+    counter = 0
     for page in range(0,last_page):
         URL = f"https://www.ezebra.pl/pl/menu/makijaz-100.html?filter_producer=&search=&filter_node%5B1%5D=&filter_price=0-30&filter_traits%5B25445%5D=25451%2C25464%2C25461%2C25450%2C25455&counter={page}"
         request = requests.get(URL)
@@ -46,17 +45,18 @@ def main(last_page):
                 price = element.find("del", {'class':'price --max'}).text
             except:
                 price = element.find('strong', {'class' : 'price'}).text
+
             a = element.find('a', {'class':'product__icon d-flex justify-content-center align-items-center'})
             href = "https://www.ezebra.pl" + a['href']
             prod_id = element['data-id']
             #print(f"ID: {prod_id} \n link: {href} \n Price: {price}")
             db_query(prod_id, price, href, tdate)
             counter += 1
+
     print(f"Commiting all of: {counter} products...")
     conn.commit()
 
-
-first_db_innit()
+#first_db_innit()
 last_page = find_last_page()
 main(last_page)
 
