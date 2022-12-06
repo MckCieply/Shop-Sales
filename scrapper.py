@@ -13,7 +13,8 @@ def first_db_innit():
                 old_price INTEGER,
                 sale_percent INTEGER,
                 new_price INTEGER,
-                link TEXT)
+                link TEXT,
+                FOREIGN KEY(product_id) REFERENCES stock(product_id));
                 """)
 
 def db_query(prod_id, old_price, sale_percent, sale_price, link):
@@ -38,16 +39,16 @@ def main(last_page):
         div = soup.find_all("div", {'class': 'product col-6 col-sm-4 pt-3 pb-md-3'})
         for element in div:
             a = element.find('a', {'class':'product__icon d-flex justify-content-center align-items-center'})
-            href = a['href']
+            href = "https://www.ezebra.pl" + a['href']
             prod_id = element['data-id']
             sale = element.find("div", {'class': 'product__yousavepercent'}).text.strip()
             sale = int(sale.strip('-%'))
             old_price = element.find('del', {"class": "price --max"}).text
             sale_price = element.find('strong', {'class' : 'price --max-exists'}).text
             #print(f"{counter}. {old_price} {sale} = {sale_price}, {href} {prod_id}")
-            print(counter)
             counter += 1
             db_query(prod_id, old_price, sale, sale_price, href)
+    print(f"Commiting all of: {counter} sales...")
     conn.commit()
     
 first_db_innit()

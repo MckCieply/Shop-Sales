@@ -5,6 +5,23 @@
 from bs4 import BeautifulSoup
 import sqlite3 as sql
 import requests
+from datetime import date
+tdate = date.today()
+
+conn = sql.connect('sales.db')
+cur = conn.cursor()
+def first_db_innit():
+    cur.execute("""CREATE TABLE stock(
+                product_id INTEGER PRIMARY KEY,
+                price INTEGER,
+                link TEXT,
+                updated DATE)
+                """)
+
+def db_query(prod_id, price, link, tdate):
+    cur.execute("""INSERT INTO stock (product_id, price, link, updated) 
+                VALUES (?,?,?,?)""", (prod_id, price, link, tdate))
+
 
 def find_last_page():
     URL = "https://www.ezebra.pl/pl/menu/makijaz-100.html?filter_producer=&search=&filter_node%5B1%5D=&filter_price=0-30&filter_traits%5B25445%5D=25451%2C25464%2C25461%2C25450%2C25455"
@@ -14,8 +31,6 @@ def find_last_page():
     li = ul.find_all('li', {'class' : 'pagination__element --item'})
     last_page = int(li[-1].text)
     return last_page
-
-last_page = find_last_page()
 
 def main(last_page):
     counter = 1
@@ -29,7 +44,13 @@ def main(last_page):
             href = "https://www.ezebra.pl" + a['href']
             prod_id = element['data-id']
             price = element.find('strong', {'class' : 'price'}).text
-            print(f"ID: {prod_id} \n link: {href} \n Price: {price}")
-            
+            #print(f"ID: {prod_id} \n link: {href} \n Price: {price}")
+            db_query(prod_id, price, href, tdate)
+            counter += 1
+    print(f"Commiting all of: {counter} deals...")
+    conn.commit()
 
+
+first_db_innit()
+last_page = find_last_page()
 main(last_page)
