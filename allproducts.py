@@ -6,6 +6,8 @@ from bs4 import BeautifulSoup
 import sqlite3 as sql
 import requests
 from datetime import date
+import time
+start_time = time.time()
 tdate = date.today()
 
 conn = sql.connect('sales.db')
@@ -40,17 +42,23 @@ def main(last_page):
         soup = BeautifulSoup(request.content, 'html5lib')
         div = soup.find_all("div", {"class" : "product col-6 col-sm-4 pt-3 pb-md-3"})
         for element in div:
+            try:
+                price = element.find("del", {'class':'price --max'}).text
+            except:
+                price = element.find('strong', {'class' : 'price'}).text
             a = element.find('a', {'class':'product__icon d-flex justify-content-center align-items-center'})
             href = "https://www.ezebra.pl" + a['href']
             prod_id = element['data-id']
-            price = element.find('strong', {'class' : 'price'}).text
             #print(f"ID: {prod_id} \n link: {href} \n Price: {price}")
             db_query(prod_id, price, href, tdate)
             counter += 1
-    print(f"Commiting all of: {counter} deals...")
+    print(f"Commiting all of: {counter} products...")
     conn.commit()
 
 
 first_db_innit()
 last_page = find_last_page()
 main(last_page)
+
+if __name__ == "__main__":
+    print(f"--- {round(time.time() - start_time, 2)} seconds ---")
