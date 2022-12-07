@@ -1,11 +1,16 @@
 from bs4 import BeautifulSoup
 import sqlite3 as sql
 import requests
+
+import notactuall
 #https://www.ezebra.pl/pl/promotions/promocja.html?&filter_traits%5B25445%5D=25451%2C25464%2C25461%2C25450%2C25455&filter_price=0-30
 #gotta make it show 100 sales per page to lower working time
 #perhaps store in db old prices to see real sale
+#gotta check whether sale is still going
 conn = sql.connect('sales.db')
 cur = conn.cursor()
+
+actuall_sales = []
 def first_db_innit():
     cur.execute("""CREATE TABLE sales(
                 sale_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -17,7 +22,8 @@ def first_db_innit():
                 FOREIGN KEY(product_id) REFERENCES stock(product_id));
                 """)
 
-def db_query(prod_id, old_price, sale_percent, sale_price, link):
+
+def db_insert(prod_id, old_price, sale_percent, sale_price, link):
     cur.execute("""INSERT INTO sales (product_id, old_price, sale_percent, new_price, link) 
                 VALUES (?,?,?,?,?)""", (prod_id, old_price, sale_percent, sale_price, link))
 
@@ -40,17 +46,23 @@ def main(last_page):
         for element in div:
             a = element.find('a', {'class':'product__icon d-flex justify-content-center align-items-center'})
             href = "https://www.ezebra.pl" + a['href']
-            prod_id = element['data-id']
+            prod_id = int(element['data-id'])
+            actuall_sales.append(prod_id)
             sale = element.find("div", {'class': 'product__yousavepercent'}).text.strip()
             sale = int(sale.strip('-%'))
             old_price = element.find('del', {"class": "price --max"}).text
             sale_price = element.find('strong', {'class' : 'price --max-exists'}).text
             #print(f"{counter}. {old_price} {sale} = {sale_price}, {href} {prod_id}")
             counter += 1
-            db_query(prod_id, old_price, sale, sale_price, href)
+            db_insert(prod_id, old_price, sale, sale_price, href)
     print(f"Commiting all of: {counter} sales...")
     conn.commit()
     
-first_db_innit()
+#first_db_innit()
 last_page = find_last_page()
 main(last_page)
+
+#Working notactuall script to check for old sales
+old_sales = notactuall.db_select()
+results = notactuall.checkOnSale(old_sales, actuall_sales)
+notactuall.db_delete(results)
