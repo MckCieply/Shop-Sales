@@ -11,5 +11,19 @@ def db_select():
     return old_sales
 
 def checkOnSale(old_sales, new_sales):
-    result = list(set(old_sales) - set(new_sales))
-    return result
+    #check whether is there any not actuall sales, out of stock or ended
+    results = list(set(old_sales) - set(new_sales))
+    return results
+
+def db_delete(results):
+    #removing sales based on prievous results
+    if not results:
+        print("There is nothing to remove.")
+    else:
+        print(f"Removing products from sales...")
+        for element in results:
+            print(f"{element}...", end=" ")
+            cur.execute('DELETE FROM sales WHERE product_id = ?', (element,))
+            print("Done")
+        conn.commit()
+    
