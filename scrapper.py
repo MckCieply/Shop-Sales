@@ -14,7 +14,7 @@ actuall_sales = []
 def first_db_innit():
     cur.execute("""CREATE TABLE sales(
                 sale_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                product_id INTEGER,
+                product_id INTEGER UNIQUE,
                 old_price INTEGER,
                 sale_percent INTEGER,
                 new_price INTEGER,
@@ -53,8 +53,12 @@ def main(last_page):
             old_price = element.find('del', {"class": "price --max"}).text
             sale_price = element.find('strong', {'class' : 'price --max-exists'}).text
             #print(f"{counter}. {old_price} {sale} = {sale_price}, {href} {prod_id}")
-            counter += 1
-            db_insert(prod_id, old_price, sale, sale_price, href)
+            try:
+                db_insert(prod_id, old_price, sale, sale_price, href)
+                counter += 1
+            except:
+                #already present in DB
+                pass
     print(f"Commiting all of: {counter} sales...")
     conn.commit()
     
