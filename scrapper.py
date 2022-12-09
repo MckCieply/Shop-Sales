@@ -63,10 +63,11 @@ def main(last_page):
     conn.commit()
     
 #first_db_innit()
-last_page = find_last_page()
-main(last_page)
+if __name__ == "__main__":
+    last_page = find_last_page()
+    main(last_page)
 
 #Working notactuall script to check for old sales
-old_sales = notactuall.db_select()
-results = notactuall.checkOnSale(old_sales, actuall_sales)
-notactuall.db_delete(results)
+    old_sales = notactuall.db_select()
+    results = notactuall.checkOnSale(old_sales, actuall_sales)
+    notactuall.db_delete(results)
