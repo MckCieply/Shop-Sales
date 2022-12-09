@@ -1,0 +1,1 @@
+#Scrpit scrapping all product names and create table to stick 'em to prod IDs
