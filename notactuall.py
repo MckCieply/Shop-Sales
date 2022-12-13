@@ -1,6 +1,6 @@
 #program to check whether its old sale and whether it has to be removed
 import sqlite3 as sql
-conn = sql.connect('sales.db')
+conn = sql.connect('shopsales/sales.db')
 cur = conn.cursor()
 def db_select():
     #query for all present sales, to be able to compare it with current sales, and be able to remove old ones from db

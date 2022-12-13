@@ -10,7 +10,7 @@ import time
 start_time = time.time()
 tdate = date.today()
 
-conn = sql.connect('sales.db')
+conn = sql.connect('shopsales/sales.db')
 cur = conn.cursor()
 def first_db_innit():
     cur.execute("""CREATE TABLE stock(

@@ -7,7 +7,7 @@ import notactuall
 #gotta make it show 100 sales per page to lower working time
 #perhaps store in db old prices to see real sale
 #gotta check whether sale is still going
-conn = sql.connect('sales.db')
+conn = sql.connect('shopsales/sales.db')
 cur = conn.cursor()
 
 actuall_sales = []
