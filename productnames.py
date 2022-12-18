@@ -9,7 +9,7 @@ start_time = time.time()
 #import allproducts
 
 
-conn = sql.connect('sales.db')
+conn = sql.connect('shopsales/sales.db')
 cur = conn.cursor()
 
 def first_db_innit():
