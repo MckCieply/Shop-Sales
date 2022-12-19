@@ -1,3 +1,5 @@
 from django.shortcuts import render
+from django.http import response
 
-# Create your views here.
+def home(response):
+    return render(response, 'productsale/home.html')
