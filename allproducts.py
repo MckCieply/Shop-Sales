@@ -21,8 +21,11 @@ def first_db_innit():
                 """)
 
 def db_query(prod_id, price, link, tdate):
-    cur.execute("""INSERT INTO stock (product_id, price, link, updated) 
-                VALUES (?,?,?,?)""", (prod_id, price, link, tdate))
+    try:
+        cur.execute("""INSERT INTO stock (product_id, price, link, updated) 
+                    VALUES (?,?,?,?)""", (prod_id, price, link, tdate))
+    except:
+        pass
 
 def find_last_page():
     URL = "https://www.ezebra.pl/pl/menu/makijaz-100.html?filter_producer=&search=&filter_node%5B1%5D=&filter_price=0-30&filter_traits%5B25445%5D=25451%2C25464%2C25461%2C25450%2C25455"
