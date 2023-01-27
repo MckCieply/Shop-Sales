@@ -22,11 +22,17 @@ def first_db_innit():
                 updated DATE)
                 """)
 
-def db_query(prod_id, price, link, tdate):
+def db_query_stock(prod_id, price, link, tdate):
     try:
         cur.execute("""INSERT INTO stock (product_id, price, link, updated) 
                     VALUES (?,?,?,?)""", (prod_id, price, link, tdate))
     except sql.IntegrityError: pass
+    
+def db_query_names(prod_id, name, brand):
+    try:
+        cur.execute("""INSERT INTO names (product_id, name, brand)
+                    VALUES (?,?,?)""", (prod_id, name, brand))
+    except sql.IntegrityError: pass  
 
 def find_last_page():
     URL = "https://www.ezebra.pl/pl/menu/makijaz-100.html?filter_producer=&search=&filter_node%5B1%5D=&filter_price=0-30&filter_traits%5B25445%5D=25451%2C25464%2C25461%2C25450%2C25455"
@@ -54,7 +60,15 @@ def main(last_page):
             href = "https://www.ezebra.pl" + a['href']
             prod_id = element['data-id']
             #print(f"ID: {prod_id} \n link: {href} \n Price: {price}")
-            db_query(prod_id, price, href, tdate)
+            db_query_stock(prod_id, price, href, tdate)
+            
+            try:
+                name = a['title']
+                brand = a['data-brand']
+            except:
+                name = brand = "missing"
+            db_query_names(prod_id, name, brand)
+            
             counter += 1
 
     print(f"Commiting all of: {counter} products...")
